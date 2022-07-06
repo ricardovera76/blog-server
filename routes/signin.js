@@ -3,7 +3,10 @@ const router = express.Router();
 const { signin } = require("../controllers/Auth");
 
 router.post("/", async (req, res) => {
-  const user = await signin(req.body.email);
+  const result = await signin(req.body.email, req.body.password);
+  console.log(result)
+  res.status(result.code).send(result.message)
+  // res.end("result")
 });
 
 module.exports = router;

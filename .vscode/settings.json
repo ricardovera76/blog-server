@@ -1,4 +1,8 @@
 {
+  "peacock.remoteColor": "#215732",
+  "cSpell.words": [
+    "signin"
+  ],
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#2f7c47",
     "activityBar.activeBorder": "#422c74",
@@ -18,6 +22,5 @@
     "titleBar.inactiveBackground": "#21573299",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.remoteColor": "#215732",
-  "cSpell.words": ["signin"]
+  "peacock.color": "#215732"
 }

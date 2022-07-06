@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const User = require('../models/Users')
 
-router.get("/", (req, res) => {
-  res.send("admin page running");
+router.get("/", async(req, res) => {
+  const result = await User.find({})
+  console.log(result)
+  res.send(`admin page running ${result}`);
 });
 
 module.exports = router;
