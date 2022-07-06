@@ -1,0 +1,36 @@
+{
+  "name": "blog-server",
+  "version": "1.0.0",
+  "description": "Server Side For Blog App",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricardovera76/blog-server.git"
+  },
+  "keywords": [
+    "Server",
+    "Node.js",
+    "app",
+    "Backend"
+  ],
+  "author": "ricardovera76",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ricardovera76/blog-server/issues"
+  },
+  "homepage": "https://github.com/ricardovera76/blog-server#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongoose": "^6.4.1",
+    "socket.io": "^4.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}
