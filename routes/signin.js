@@ -3,14 +3,8 @@ const router = express.Router();
 const { signin } = require("../controllers/Auth");
 
 router.post("/", async (req, res) => {
-  const result = await signin(req.body.email, req.body.password);
-  console.log(result)
-  res.status(result.code).send(result.message)
-  // res.end("result")
+  const signedUser = await signin(req.body.email, req.body.password);
+  res.status(signedUser.code).send(signedUser.message);
 });
 
 module.exports = router;
-/*
--> : /signin
-the user must be created to check email and pass combination else throw an err
-*/
