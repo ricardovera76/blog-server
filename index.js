@@ -8,7 +8,6 @@ const server = http.createServer(app);
 const port = process.env.PORT || 3001;
 const { Server } = require("socket.io");
 
-
 // middleware / database connection
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -35,13 +34,22 @@ server.listen(port, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:4500",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   },
 });
 
 io.on("connection", (socket) => {
   console.log(socket.id);
+  socket.on("join_room", (data) => {
+    socket.join(data);
+    console.log(`User with ID: ${socket.id} joined room: ${data}`);
+  });
+
+  socket.on("send_message", (data) => {
+    socket.to(data.room).emit("received_message", data);
+  });
+
   socket.on("disconnect", () => {
     console.log("User Disconnected | ", socket.id);
   });
