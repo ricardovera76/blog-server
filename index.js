@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO_URI);
 
 // API routes
 const adminRoute = require("./routes/admin");
-const chatsRoute = require("./routes/chats");
+const {router:chatsRoute} = require("./routes/chats");
 const dashboardRoute = require("./routes/dashboard");
 const postsRoute = require("./routes/posts");
 const signinRoute = require("./routes/signin");
@@ -34,23 +34,27 @@ server.listen(port, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:4500",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   },
 });
 
-io.on("connection", (socket) => {
-  console.log(socket.id);
-  socket.on("join_room", (data) => {
-    socket.join(data);
-    console.log(`User with ID: ${socket.id} joined room: ${data}`);
-  });
+const {socketServer} = require('./routes/chats')
+socketServer(io)
 
-  socket.on("send_message", (data) => {
-    socket.to(data.room).emit("received_message", data);
-  });
+module.exports = {io}
+// io.on("connection", (socket) => {
+//   console.log(socket.id);
+//   socket.on("join_room", (data) => {
+//     socket.join(data);
+//     console.log(`User with ID: ${socket.id} joined room: ${data}`);
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("User Disconnected | ", socket.id);
-  });
-});
+//   socket.on("send_message", (data) => {
+//     socket.to(data.room).emit("received_message", data);
+//   });
+
+//   socket.on("disconnect", () => {
+//     console.log("User Disconnected | ", socket.id);
+//   });
+// });
