@@ -1,27 +1,24 @@
 const mongoose = require("mongoose");
 
-const MessageSchema = new mongoose.Schema(
-  {
-    sender_id: {
-      type: String,
-      required: true,
-    },
-    time: {
-      type: Date,
-      required: true,
-      default: new Date(),
-    },
-    text: {
-      type: String,
-      required: true,
-    },
-    _id: {
-      type: String,
-      required: true,
-    },
+const MessageSchema = new mongoose.Schema({
+  sender_id: {
+    type: String,
+    required: true,
   },
-  { _id: false }
-);
+  time: {
+    type: Date,
+    required: true,
+    default: new Date(),
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+  chat_id: {
+    type: String,
+    required: true,
+  },
+});
 
 const ChatSchema = new mongoose.Schema(
   {

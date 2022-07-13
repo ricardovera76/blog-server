@@ -2,31 +2,30 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  // console.log(io)
   res.send("chats page running");
 });
 
-
 const socketServer = (io) => {
   io.on("connection", (socket) => {
-    console.log(socket.id);
-    socket.on("join_room", (data) => {
-      socket.join(data);
-      console.log(`User with ID: ${socket.id} joined room: ${data}`);
+    socket.on("join_chat", (room) => {
+      socket.join(room);
     });
-  
+
     socket.on("send_message", (data) => {
       socket.to(data.room).emit("received_message", data);
+
+      // send message data to chat id in db
+
+      // update the array in the chats collection ==> research to how to update an array inside a collection
     });
-  
+
     socket.on("disconnect", () => {
       console.log("User Disconnected | ", socket.id);
     });
   });
-}
+};
 
-
-module.exports = {router,socketServer};
+module.exports = { router, socketServer };
 
 /*
 -> : /chats

@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO_URI);
 
 // API routes
 const adminRoute = require("./routes/admin");
-const {router:chatsRoute} = require("./routes/chats");
+const { router: chatsRoute } = require("./routes/chats");
 const dashboardRoute = require("./routes/dashboard");
 const postsRoute = require("./routes/posts");
 const signinRoute = require("./routes/signin");
@@ -39,22 +39,7 @@ const io = new Server(server, {
   },
 });
 
-const {socketServer} = require('./routes/chats')
-socketServer(io)
+const { socketServer } = require("./routes/chats");
+socketServer(io);
 
-module.exports = {io}
-// io.on("connection", (socket) => {
-//   console.log(socket.id);
-//   socket.on("join_room", (data) => {
-//     socket.join(data);
-//     console.log(`User with ID: ${socket.id} joined room: ${data}`);
-//   });
-
-//   socket.on("send_message", (data) => {
-//     socket.to(data.room).emit("received_message", data);
-//   });
-
-//   socket.on("disconnect", () => {
-//     console.log("User Disconnected | ", socket.id);
-//   });
-// });
+module.exports = { io };
