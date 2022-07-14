@@ -1,10 +1,22 @@
 const express = require("express");
 const router = express.Router();
+/*
+-> : /chats
+fetch chat data according to user be in those chats
 
+get al the available chat for the current user
+*/
+s;
 router.get("/", (req, res) => {
   res.send("chats page running");
 });
 
+/*
+-> : /chat/:id
+make posts to send message, get to get current messages
+
+send / receive menssages form each individual chat
+*/
 const socketServer = (io) => {
   io.on("connection", (socket) => {
     socket.on("join_chat", (room) => {
@@ -26,11 +38,3 @@ const socketServer = (io) => {
 };
 
 module.exports = { router, socketServer };
-
-/*
--> : /chats
-fetch chat data according to user be in those chats
-
--> : /chat/:id
-make posts to send message, get to get current messages
-*/
