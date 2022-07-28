@@ -6,7 +6,6 @@ fetch chat data according to user be in those chats
 
 get al the available chat for the current user
 */
-s;
 router.get("/", (req, res) => {
   res.send("chats page running");
 });
@@ -19,12 +18,13 @@ send / receive menssages form each individual chat
 */
 const socketServer = (io) => {
   io.on("connection", (socket) => {
-    socket.on("join_chat", (room) => {
+    socket.on("join", (room) => {
       socket.join(room);
     });
 
-    socket.on("send_message", (data) => {
-      socket.to(data.room).emit("received_message", data);
+    socket.on("send", (data) => {
+      console.log(data);
+      socket.to(data.room).emit("received", data);
 
       // send message data to chat id in db
 

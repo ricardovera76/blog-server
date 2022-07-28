@@ -1,15 +1,11 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../src/database/database");
 
-const Posts = sequelize.define("posts", {
+const Messages = sequelize.define("messages", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-  },
-  title: {
-    type: DataTypes.STRING,
-    unique: true,
   },
   sender_id: {
     type: DataTypes.INTEGER,
@@ -19,9 +15,14 @@ const Posts = sequelize.define("posts", {
   text: {
     type: DataTypes.STRING,
   },
+  chat_id: {
+    type: DataTypes.INTEGER,
+    references: "chats",
+    referencesKey: "id",
+  },
   time: {
     type: DataTypes.TIME,
   },
 });
 
-module.exports = Posts;
+module.exports = Messages;

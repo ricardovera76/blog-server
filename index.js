@@ -1,37 +1,23 @@
 require("dotenv").config();
-const express = require("express");
+const app = require("./app");
+const { socketServer } = require("./routes/chats");
+const { Server } = require("socket.io");
 const http = require("http");
-const cors = require("cors");
-const mongoose = require("mongoose");
-const app = express();
 const server = http.createServer(app);
 const port = process.env.PORT || 3001;
-const { Server } = require("socket.io");
+const sequelize = require("./database/database");
 
-// middleware / database connection
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cors());
-mongoose.connect(process.env.MONGO_URI);
-
-// API routes
-const adminRoute = require("./routes/admin");
-const { router: chatsRoute } = require("./routes/chats");
-const dashboardRoute = require("./routes/dashboard");
-const postsRoute = require("./routes/posts");
-const signinRoute = require("./routes/signin");
-const signupRoute = require("./routes/signup");
-app.use("/dashboard", dashboardRoute);
-app.use("/admin", adminRoute);
-app.use("/chats", chatsRoute);
-app.use("/posts", postsRoute);
-app.use("/signin", signinRoute);
-app.use("/signup", signupRoute);
-
-server.listen(port, () => {
-  console.log(`App running on port ${port} @ http://localhost:${port}`);
-});
-
+const main = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("connection to db has been established");
+    server.listen(port, () => {
+      console.log(`App running on port ${port} @ http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("Unable to connect to db", error);
+  }
+};
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -39,7 +25,6 @@ const io = new Server(server, {
   },
 });
 
-const { socketServer } = require("./routes/chats");
-socketServer(io);
+main();
 
-module.exports = { io };
+socketServer(io);

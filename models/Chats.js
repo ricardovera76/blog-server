@@ -1,41 +1,16 @@
-const mongoose = require("mongoose");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../src/database/database");
 
-const MessageSchema = new mongoose.Schema({
-  sender_id: {
-    type: String,
-    required: true,
+const Chats = sequelize.define("chats", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
   },
-  time: {
-    type: Date,
-    required: true,
-    default: new Date(),
-  },
-  text: {
-    type: String,
-    required: true,
-  },
-  chat_id: {
-    type: String,
-    required: true,
+  name: {
+    type: DataTypes.STRING,
+    unique: true,
   },
 });
 
-const ChatSchema = new mongoose.Schema(
-  {
-    _id: {
-      type: String,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    participants: [String],
-    messages: [MessageSchema],
-  },
-  { _id: false }
-);
-
-const ChatModel = mongoose.model("chats", ChatSchema);
-
-module.exports = ChatModel;
+module.exports = Chats;
