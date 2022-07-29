@@ -1,10 +1,16 @@
 const express = require("express");
 const router = express.Router();
-// const User = require("../models/Users");
+const { Users } = require("../models");
 
 router.get("/", async (req, res) => {
-  // const result = await User.find({});
-  // console.log(result);
+  const data = {
+    user_name: "rick123",
+    name: "rick",
+    email: "rick@email.com",
+    password: "123456798",
+    isAdmin: false,
+  };
+  await Users.create(data);
   res.end(`admin page running`);
 });
 

@@ -1,8 +1,4 @@
-const Sequelize = require("sequelize");
+const db = require("./models");
+// use these to extract data from the db
 
-const sequelize = new Sequelize("testing", "admin", "admin", {
-  host: "localhost",
-  dialect: "postgres",
-});
-
-module.exports = sequelize;
+//INSERT INTO users VALUES (1,'jose', 'jose132'),(2,'jhon', 'jhon132'),(3,'mery', 'mery132');
