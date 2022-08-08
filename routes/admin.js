@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const { Users } = require("../models");
-
 router.get("/", async (req, res) => {
   const data = {
     user_name: "rick123",
@@ -10,7 +8,6 @@ router.get("/", async (req, res) => {
     password: "123456798",
     isAdmin: false,
   };
-  await Users.create(data);
   res.end(`admin page running`);
 });
 

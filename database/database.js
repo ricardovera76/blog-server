@@ -1,4 +1,10 @@
-const db = require("./models");
-// use these to extract data from the db
+const mysql = require("mysql2");
 
-//INSERT INTO users VALUES (1,'jose', 'jose132'),(2,'jhon', 'jhon132'),(3,'mery', 'mery132');
+const connection = mysql.createConnection({
+  host: "localhost",
+  database: "testingSQL",
+  user: "root",
+  password: null,
+});
+
+module.exports = connection;

@@ -5,12 +5,11 @@ const { Server } = require("socket.io");
 const http = require("http");
 const server = http.createServer(app);
 const port = process.env.PORT || 3001;
-const db = require("./models");
+const connection = require("./database/database");
 
-db.sequelize.sync().then(() => {
-  server.listen(port, () => {
-    console.log(`App running on port ${port} @ http://localhost:${port}`);
-  });
+server.listen(port, () => {
+  connection.connect();
+  console.log(`App running on port ${port} @ http://localhost:${port}`);
 });
 
 const io = new Server(server, {
