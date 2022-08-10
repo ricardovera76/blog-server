@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const { AddUserToChat } = require("../database/requests");
 router.get("/", async (req, res) => {
-  const data = {
-    user_name: "rick123",
-    name: "rick",
-    email: "rick@email.com",
-    password: "123456798",
-    isAdmin: false,
-  };
-  res.end(`admin page running`);
+  // const data = {
+  //   user_name: "rick123",
+  //   name: "rick",
+  //   email: "rick@email.com",
+  //   password: "123456798",
+  //   isAdmin: false,
+  // };
+  res.send("data");
 });
 
 module.exports = router;

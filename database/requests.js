@@ -1,5 +1,25 @@
 const connection = require("./database");
+// CLEAN UP THE REQUEST NAMES AND ONLY DO THE JOINS
+/*
+USERS:
+- GET USER BY NAME [CHATS AND ALL]
+- CREATE A NEW USER
 
+CHATS:
+- CREATE A CHAT
+- CREATE PARTICIPANT
+- GET CHAT BY NAME
+- GET CHAT DATA BY CHAT NAME
+
+MESSAGES:
+- INSERT A MESSAGE
+
+POSTS:
+- GET POSTS
+- UPDATE POST
+  - DELETE POST
+  - CREATE POST
+*/
 // USER
 const GetAllUsers = async () => {
   const [rows] = await connection.promise().execute(`SELECT * FROM Users;`);
@@ -28,9 +48,12 @@ const AuthUser = async (mail) => {
   return rows;
 };
 const CreateAUser = async (values) => {
-  connection.query(
-    `INSERT INTO Users (u_name, user_name, email, password, is_admin) VALUES ("${values.u_name}", "${values.user_name}","${values.email}","${values.password}", "${values.is_admin}");`
-  );
+  const [rows] = await connection
+    .promise()
+    .execute(
+      `INSERT INTO Users (u_name, user_name, email, password, is_admin, ip_address) VALUES ("${values.u_name}", "${values.user_name}","${values.email}","${values.password}", 0, "${values.ip_address}");`
+    );
+  return rows;
 };
 
 // POST
@@ -68,6 +91,18 @@ const GetChatData = async (chatName) => {
 
   return rows;
 };
+const AddUserToChat = async (chatName, userName) => {
+  const [[chatData]] = await connection
+    .promise()
+    .execute(`SELECT * FROM Chats WHERE Chats.chat_name="${chatName}";`);
+  const [[userData]] = await connection
+    .promise()
+    .execute(`SELECT * FROM Users WHERE Users.user_name="${userName}";`);
+  connection.query(
+    `INSERT INTO UserChats(userchat_chat_id,userchat_user_id) VALUES("${chatData.chat_id}","${userData.user_id}")`
+  );
+};
+
 const CreateAChat = async (chatName) => {
   connection.query(`INSERT INTO Chats(chat_name) VALUES("${chatName})`);
 };
@@ -91,4 +126,5 @@ module.exports = {
   CreateAChat,
   SendMessage,
   GetPostsDashboard,
+  AddUserToChat,
 };
