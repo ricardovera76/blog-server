@@ -8,8 +8,7 @@ router.post("/", async (req, res) => {
     req.body.password,
     req.body.ipAddress
   );
-  res.status(signedUser.code).send(signedUser.message);
-  console.log(signedUser?.data);
+  res.send(signedUser);
 });
 
 module.exports = router;

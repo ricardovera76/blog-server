@@ -1,12 +1,12 @@
 const {
-  GetChatData,
-  SendMessage,
-  CreateAChat,
-  AddUserToChat,
-} = require("../database/requests");
+  getChat,
+  addParticipant,
+  createChat,
+  sendMessage,
+} = require("../database/queries");
 
-const chatInfo = async (id) => {
-  return await GetChatData(id);
+const chatInfo = async (name) => {
+  return await getChat(name);
 };
 
 const sendMsg = async (chatId, userId, text) => {
@@ -15,20 +15,21 @@ const sendMsg = async (chatId, userId, text) => {
     message_user_id: userId,
     message_text: text,
   };
-  await SendMessage(data);
+  await sendMessage(data);
 };
 
-const addParticipant = async (chatName, userName) => {
-  await AddUserToChat(chatName, userName);
+const addUser = async (chatName, userName) => {
+  //get the ids firsts
+  await addParticipant(chatId, userId);
 };
 
-const createChat = async (name) => {
-  await CreateAChat(name);
+const newChat = async (name) => {
+  await createChat(name);
 };
 
 module.exports = {
   chatInfo,
   sendMsg,
-  createChat,
-  addParticipant,
+  newChat,
+  addUser,
 };

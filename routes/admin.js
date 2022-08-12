@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { AddUserToChat } = require("../database/requests");
+// const { AddUserToChat } = require("../database/requests");
 router.get("/", async (req, res) => {
   // const data = {
   //   user_name: "rick123",

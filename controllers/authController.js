@@ -1,26 +1,33 @@
-const { AuthUser, GetUserData, CreateAUser } = require("../database/requests");
+const { getUser, getChats, insertUser } = require("../database/queries");
 
 const signin = async (email, password, ipAddress) => {
   const chatArray = [];
-  const [dbUser] = await AuthUser(email);
-  if (dbUser.email !== email)
-    return {
+  let result = {};
+  const [dbUser] = await getUser(email);
+  if (dbUser === undefined) {
+    result = {
       code: 401,
       message: "The combination of email and password does not exist",
     };
-  if (dbUser?.password !== password)
-    return {
+    return result;
+  }
+  if (dbUser?.password !== password) {
+    result = {
       code: 401,
       message: "Incorrect Password",
     };
-  if (dbUser?.ip_address !== ipAddress)
-    return {
+    return result;
+  }
+  if (dbUser?.ip_address !== ipAddress) {
+    result = {
       code: 401,
       message: "Cannot access the page from where you are",
     };
-  const chats = await GetUserData(dbUser.user_id);
+    return result;
+  }
+  const chats = await getChats(dbUser.user_id);
   chats.forEach((chat) => chatArray.push(chat.chat_name));
-  const enteredUserData = {
+  result = {
     name: dbUser.u_name,
     email: dbUser.email,
     id: dbUser.user_id,
@@ -28,14 +35,10 @@ const signin = async (email, password, ipAddress) => {
     userName: dbUser.user_name,
     ipAddress: dbUser.ip_address,
     isAdmin: dbUser.is_admin,
-  };
-  const success = {
     message: "Access granted",
     code: 200,
-    data: enteredUserData,
   };
-
-  return success;
+  return result;
 };
 
 const signup = async (userData) => {
@@ -46,11 +49,11 @@ const signup = async (userData) => {
     password: userData.password,
     ip_address: userData.ipAddress,
   };
-  const test = await CreateAUser(data);
+  const insertedUser = await insertUser(data);
   return {
     name: userData.name,
     email: userData.email,
-    id: test.insertId,
+    id: insertedUser.insertId,
     chats: [],
     userName: userData.userName,
     ipAddress: userData.ipAddress,
