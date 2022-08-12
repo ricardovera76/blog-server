@@ -1,34 +1,25 @@
 const express = require("express");
 const router = express.Router();
-/*
--> : /chats
-fetch chat data according to user be in those chats
+const { chatInfo, sendMsg } = require("../controllers/chatsController");
 
-get al the available chat for the current user
-*/
-router.get("/", (req, res) => {
-  res.send("chats page running");
+router.get("/:id", async (req, res) => {
+  const chatData = await chatInfo(req.params.id);
+  // send better data
+  res.send(chatData);
 });
 
-/*
--> : /chat/:id
-make posts to send message, get to get current messages
-
-send / receive menssages form each individual chat
-*/
 const socketServer = (io) => {
   io.on("connection", (socket) => {
     socket.on("join", (room) => {
       socket.join(room);
     });
 
-    socket.on("send", (data) => {
+    socket.on("send", async (data) => {
       console.log(data);
+      const chatData = await chatInfo(data.room);
+      console.log(chatData[0].chat_id);
       socket.to(data.room).emit("received", data);
-
-      // send message data to chat id in db
-
-      // update the array in the chats collection ==> research to how to update an array inside a collection
+      await sendMsg(chatData[0].chat_id, data.author, data.message);
     });
 
     socket.on("disconnect", () => {

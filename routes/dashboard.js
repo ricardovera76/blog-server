@@ -16,12 +16,8 @@ const samplePosts = [
 router.get("/", async (req, res) => {
   // get the first 10 posts from the db
   // const selectedPosts = await Posts.where({date is <= now()}).limit(10);
-  try {
-    // res.send(selectedPosts);
-    res.send(samplePosts);
-  } catch (e) {
-    console.log(e.message);
-  }
+  // res.send(selectedPosts);
+  res.send(samplePosts);
 });
 
 module.exports = router;
