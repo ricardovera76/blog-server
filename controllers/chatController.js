@@ -3,10 +3,15 @@ const {
   addParticipant,
   createChat,
   sendMessage,
+  getChatData,
 } = require("../database/queries");
 
 const chatInfo = async (name) => {
   return await getChat(name);
+};
+
+const chatHistory = async (name) => {
+  return await getChatData(name);
 };
 
 const sendMsg = async (chatId, userId, text) => {
@@ -32,4 +37,5 @@ module.exports = {
   sendMsg,
   newChat,
   addUser,
+  chatHistory,
 };

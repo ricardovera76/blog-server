@@ -50,13 +50,18 @@ const deletePost = async (postId) => {
 };
 
 // CHAT
-const getChat = async (chatName) => {
+const getChatData = async (chatName) => {
   const [rows] = await connection
     .promise()
     .execute(
       `SELECT Chats.chat_id, Chats.chat_name, Users.u_name, Messages.message_text, Messages.message_time FROM Chats INNER JOIN Messages ON Messages.message_chat_id=Chats.chat_id INNER JOIN Users ON Users.user_id=Messages.message_user_id WHERE Chats.chat_name="${chatName}" ORDER BY Messages.message_time ASC;`
     );
-
+  return rows;
+};
+const getChat = async (chatName) => {
+  const [rows] = await connection
+    .promise()
+    .execute(`SELECT * FROM Chats WHERE chat_name="${chatName}";`);
   return rows;
 };
 const addParticipant = async (chatId, userId) => {
@@ -84,6 +89,7 @@ module.exports = {
   updatePost,
   deletePost,
   getChat,
+  getChatData,
   addParticipant,
   createChat,
   sendMessage,
