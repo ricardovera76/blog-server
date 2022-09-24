@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const moment = require("moment");
-const { getAllPosts } = require("../database/queries");
-// const Posts = require("../models/Posts")
+const { getPosts } = require("../controllers/postController");
 
 const samplePosts = [
   {
@@ -19,10 +18,8 @@ router.get("/", async (req, res) => {
   // get the first 10 posts from the db
   // const selectedPosts = await Posts.where({date is <= now()}).limit(10);
   // res.send(selectedPosts);
-  const data = await getAllPosts();
-  const result = moment(data[0].created_at).format("DD-MM-YYYY kk:mm:ss");
-  console.log(result);
-  res.send("samplePosts");
+  const data = await getPosts(true);
+  res.send(data);
 });
 
 module.exports = router;

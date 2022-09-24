@@ -1,25 +1,37 @@
 const express = require("express");
 const router = express.Router();
-// const Posts = require("../models/Posts");
+const {
+  getPosts,
+  createPost,
+  updatePost,
+  deletePost,
+} = require("../controllers/postController");
 
 router.get("/", async (req, res) => {
-  //get all posts with mongoose
-  // const allPosts = await Posts.find();
-  res.send("ok");
+  const allPosts = await getPosts(false);
+  res.send(allPosts);
 });
 
 router.post("/", async (req, res) => {
-  // create with mongoose
-  const receivedPost = req.body;
-  // const newMongoosePost = Posts.create(receivedPost)
-  console.log(receivedPost);
-  res.end("ok");
+  const postTitle = req.body.post_title;
+  const postBody = req.body.post_body;
+  const userId = req.body.post_user_id;
+  const result = await createPost(postTitle, postBody, userId);
+  res.end(result);
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   const postId = req.params.id;
-  //update with mongoose
-  res.end(postId);
+  const newValue = req.body.value;
+  const valueToUpdate = req.body.type;
+  const result = await updatePost(valueToUpdate, newValue, postId);
+  res.end(result);
+});
+
+router.delete("/:id", async (req, res) => {
+  const postId = req.params.id;
+  const result = await deletePost(postId);
+  res.send(`${result} : ${postId}`);
 });
 
 module.exports = router;

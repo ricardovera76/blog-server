@@ -37,12 +37,12 @@ const getPosts = async () => {
 };
 const createPost = async (values) => {
   connection.query(
-    `INSERT INTO Posts (post_body, post_user_id) VALUES ("${values.post_body}", "${values.post_user_id}");`
+    `INSERT INTO Posts (post_body, post_user_id, post_title) VALUES ("${values.body}", "${values.userId}", "${values.title}");`
   );
 };
-const updatePost = async (values) => {
+const updatePost = async (data) => {
   connection.query(
-    `UPDATE Posts SET post_body = "${values.post_body}" WHERE post_id=${values.post_id};`
+    `UPDATE Posts SET post_${data.type} = "${data.value}" WHERE post_id=${data.id};`
   );
 };
 const deletePost = async (postId) => {
