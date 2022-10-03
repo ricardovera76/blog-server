@@ -8,8 +8,12 @@ const port = process.env.PORT || 3001;
 const connection = require("./database/database");
 
 server.listen(port, () => {
-  connection.connect();
-  console.log(`App running on port ${port} @ http://localhost:${port}`);
+  try {
+    connection.connect();
+    console.log(`App running on port ${port} @ http://localhost:${port}`);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 const io = new Server(server, {

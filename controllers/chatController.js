@@ -15,12 +15,16 @@ const chatHistory = async (name) => {
 };
 
 const sendMsg = async (chatId, userId, text) => {
-  const data = {
-    message_chat_id: chatId,
-    message_user_id: userId,
-    message_text: text,
-  };
-  await sendMessage(data);
+  try {
+    const data = {
+      message_chat_id: chatId,
+      message_user_id: userId,
+      message_text: text,
+    };
+    await sendMessage(data);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const addUser = async (chatName, userName) => {

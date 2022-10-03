@@ -13,22 +13,31 @@ router.get("/:id", async (req, res) => {
 
 const socketServer = (io) => {
   let chatId;
-  io.on("connection", (socket) => {
-    socket.on("join", async (room) => {
-      const [chatData] = await chatInfo(room);
-      chatId = chatData.chat_id;
-      socket.join(room);
-    });
+  try {
+    io.on("connection", (socket) => {
+      socket.on("join", async (room) => {
+        const [chatData] = await chatInfo(room);
+        chatId = chatData.chat_id;
+        socket.join(room);
+      });
 
-    socket.on("send", async (data) => {
-      socket.to(data.chat_name).emit("received", data);
-      await sendMsg(chatId, data.user_id, data.message);
-    });
+      socket.on("send", async (data) => {
+        console.log(data);
+        try {
+          socket.to(data.chat_name).emit("received", data);
+          await sendMsg(chatId, data.user_id, data.message);
+        } catch (err) {
+          console.log(err);
+        }
+      });
 
-    socket.on("disconnect", () => {
-      console.log("User Disconnected | ", socket.id);
+      socket.on("disconnect", () => {
+        console.log("User Disconnected | ", socket.id);
+      });
     });
-  });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 module.exports = { router, socketServer };

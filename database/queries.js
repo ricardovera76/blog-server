@@ -26,13 +26,15 @@ const insertUser = async (values) => {
 
 // POST
 const getAllPosts = async () => {
-  const [rows] = await connection.promise().execute(`SELECT * FROM Posts;`);
+  const [rows] = await connection
+    .promise()
+    .execute(`SELECT * FROM Posts ORDER BY updated_at DESC;`);
   return rows;
 };
 const getPosts = async () => {
   const [rows] = await connection
     .promise()
-    .execute(`SELECT * FROM Posts LIMIT 10;`);
+    .execute(`SELECT * FROM Posts ORDER BY updated_at DESC LIMIT 10;`);
   return rows;
 };
 const createPost = async (values) => {
