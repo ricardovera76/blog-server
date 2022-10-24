@@ -6,6 +6,7 @@ const dashboardRoute = require("./routes/dashboard");
 const postsRoute = require("./routes/posts");
 const signinRoute = require("./routes/signin");
 const signupRoute = require("./routes/signup");
+const userRoute = require("./routes/user");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(cors());
 
 // API routes
 app.use("/dashboard", dashboardRoute);
+app.use("/user", userRoute);
 app.use("/admin", adminRoute);
 app.use("/chats", chatsRoute);
 app.use("/posts", postsRoute);

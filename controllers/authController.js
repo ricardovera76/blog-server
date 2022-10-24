@@ -43,11 +43,18 @@ const signInUser = async (user) => {
         message: "user does not exists",
       };
     }
-    if (userData[0].password != user.password) {
+    if (userData[0].password !== user.password) {
       return {
         error: true,
         code: 406,
         message: "wrong email & password combination",
+      };
+    }
+    if (userData[0].ip_address !== user.ipAddress) {
+      return {
+        error: true,
+        code: 406,
+        message: "cannot access from that location",
       };
     }
     return {

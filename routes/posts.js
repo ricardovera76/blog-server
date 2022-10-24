@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
 const {
   createPost,
   replyPost,
@@ -25,7 +26,7 @@ router.get("/:filter", async (req, res) => {
   res.send(result);
 });
 
-router.post("/", async (req, res) => {
+router.post("/new", async (req, res) => {
   /*FILE FORM OR MULTIFORM IN REACT JS
   {
     title,
@@ -35,21 +36,31 @@ router.post("/", async (req, res) => {
     subjectName,
     cover --> file
   }
- */
-  const values = req.body;
-  let coverImage;
-  let uploadCoverPath;
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("no files uploaded");
-  }
-  coverImage = req.files.cover;
-  uploadCoverPath = `${__dirname}/uploads/${values.title}${values.userName}${values.subjectName}${coverImage.name}`;
-  coverImage.mv(uploadCoverPath, (err) => {
-    if (err) return res.status(500).send(err);
+  */
+  let uploadCoverPath = "";
+  let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "./uploads");
+    },
+    filename: (req, file, cb) => {
+      let tempFileArr = file.originalname.split(".");
+      let tempFileName = tempFileArr[0];
+      let tempFileExt = tempFileArr[1];
+      uploadCoverPath =
+        __dirname + "/uploads/" + tempFileName + "." + tempFileExt;
+      cb(null, tempFileName + "." + tempFileExt);
+    },
   });
-  const value = { ...values, cover: uploadCoverPath };
-  const data = await createPost(value);
-  res.send(data);
+  let upload = multer({ storage: storage }).single("cover");
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.end("error occurred");
+    } else {
+      const values = req.body;
+      const data = await createPost({ ...values, cover: uploadCoverPath });
+      res.send(data);
+    }
+  });
 });
 
 router.put("/reply", async (req, res) => {

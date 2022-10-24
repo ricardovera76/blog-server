@@ -31,7 +31,7 @@ const createPost = async (data) => {
     };
   } catch (e) {
     let error = e;
-    if (e.sql !== undefined) {
+    if (e.sql !== undefined || e.ERROR_SQL_N !== undefined) {
       error = {
         ERROR_SQL_CODE: e.code,
         ERROR_SQL_N: e.errno,
@@ -40,7 +40,7 @@ const createPost = async (data) => {
         SQL_LINE_FAULT: e.sql,
       };
     }
-    return { error: true, code: 800, message: error.message };
+    return { error: true, code: 800, message: error };
   }
 };
 const replyPost = async (data) => {

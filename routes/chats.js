@@ -14,9 +14,17 @@ const socketServer = (io) => {
   try {
     io.on("connection", (socket) => {
       socket.on("join", async (room) => {
-        const [chatData] = await chatInfo(room);
-        chatId = chatData.chat_id;
-        socket.join(room);
+        try {
+          const chatData = await getChatHistory(room);
+          if (!chatData.error) {
+            chatId = chatData.chat_id;
+            socket.join(room);
+            return;
+          }
+          console.log(chatData);
+        } catch (error) {
+          console.log(error);
+        }
       });
 
       socket.on("send", async (data) => {
