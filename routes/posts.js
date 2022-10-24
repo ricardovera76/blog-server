@@ -1,58 +1,123 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getPosts,
   createPost,
+  replyPost,
   updatePost,
   deletePost,
+  getAllPost,
+  getRecentPosts,
+  getFilteredPosts,
+  getPostData,
 } = require("../controllers/postController");
 
-router.get("/", async (req, res) => {
-  try {
-    const allPosts = await getPosts(false);
-    res.send(allPosts);
-  } catch (error) {
-    console.log(error);
-    res.send(`${error}`);
-  }
+router.get("/all", async (req, res) => {
+  const result = await getAllPost();
+  res.send(result);
+});
+router.get("/recent", async (req, res) => {
+  const result = await getRecentPosts();
+  res.send(result);
+});
+router.get("/:filter", async (req, res) => {
+  const filter = req.params.filter;
+  const result = await getFilteredPosts(filter);
+  res.send(result);
 });
 
 router.post("/", async (req, res) => {
-  try {
-    const postTitle = req.body.post_title;
-    const postBody = req.body.post_body;
-    const userId = req.body.post_user_id;
-    const result = await createPost(postTitle, postBody, userId);
-    res.end(JSON.stringify({ type: "ok", result }));
-  } catch (error) {
-    res
-      .status(400)
-      .send(JSON.stringify({ type: "error", result: error.message }));
+  /*FILE FORM OR MULTIFORM IN REACT JS
+  {
+    title,
+    body,
+    vidLink,
+    userName,
+    subjectName,
+    cover --> file
   }
+ */
+  const values = req.body;
+  let coverImage;
+  let uploadCoverPath;
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("no files uploaded");
+  }
+  coverImage = req.files.cover;
+  uploadCoverPath = `${__dirname}/uploads/${values.title}${values.userName}${values.subjectName}${coverImage.name}`;
+  coverImage.mv(uploadCoverPath, (err) => {
+    if (err) return res.status(500).send(err);
+  });
+  const value = { ...values, cover: uploadCoverPath };
+  const data = await createPost(value);
+  res.send(data);
 });
 
-router.put("/:id", async (req, res) => {
-  try {
-    const postId = req.params.id;
-    const newValue = req.body.value;
-    const valueToUpdate = req.body.type;
-    const result = await updatePost(valueToUpdate, newValue, postId);
-    res.end(result);
-  } catch (error) {
-    console.log(error);
-    res.send(`${error}`);
+router.put("/reply", async (req, res) => {
+  /*
+  {
+    title
+    userName,
+    subjectName
+    message
   }
+ */
+  const data = req.body;
+  const result = await replyPost(data);
+  res.send(result);
+});
+router.put("/", async () => {
+  /*
+  {
+    title
+    userName,
+    subjectName
+  }
+ */
+  const data = req.body;
+  const result = await updatePost(data);
+  res.send(result);
+});
+router.post("/data", async (req, res) => {
+  /*
+  {
+    title
+    userName,
+    subjectName
+  }
+ */
+  const data = req.body;
+  const result = await getPostData(data);
+  res.send(result);
 });
 
-router.delete("/:id", async (req, res) => {
-  try {
-    const postId = req.params.id;
-    const result = await deletePost(postId);
-    res.send(`${result} : ${postId}`);
-  } catch (error) {
-    console.log(error);
-    res.send(`${error}`);
+router.post("/cover", async (req, res) => {
+  /*
+  {
+    title
+    userName,
+    subjectName
   }
+ */
+  const data = req.body;
+  const result = await getPostData(data);
+  if (!result.error) {
+    res.sendFile(result.data.post_cover);
+    return;
+  }
+  res.send(result);
+});
+
+router.delete("/", async (req, res) => {
+  /*
+  {
+    title
+    userName,
+    subjectName
+  }
+ */
+  const data = req.body;
+  const result = await deletePost(data);
+  res.send(result);
 });
 
 module.exports = router;

@@ -1,64 +1,102 @@
-const { getUser, getChats, insertUser } = require("../database/queries");
+const connection = require("../database/database");
 
-const signin = async (email, password, ipAddress) => {
-  const chatArray = [];
-  let result = {};
-  const [dbUser] = await getUser(email);
-  if (dbUser === undefined) {
-    result = {
-      code: 401,
-      message: "The combination of email and password does not exist",
+const signUpUser = async (user) => {
+  try {
+    await connection
+      .promise()
+      .execute(
+        `INSERT INTO users (user_alias, user_name, email, password, ip_address) VALUES ("${user.alias}", "${user.userName}","${user.email}","${user.password}", "${user.ipAddress}");`
+      );
+    const [[rows]] = await connection
+      .promise()
+      .execute(`SELECT * FROM users WHERE email="${user.email}";`);
+    return {
+      error: false,
+      code: 200,
+      message: `success!`,
+      data: rows,
     };
-    return result;
+  } catch (e) {
+    let error = e;
+    if (e.sql !== undefined) {
+      error = {
+        ERROR_SQL_CODE: e.code,
+        ERROR_SQL_N: e.errno,
+        SQL_ERROR_MESSAGE: e.sqlMessage,
+        MESSAGE: "AN ERROR HAS OCCURRED",
+        SQL_LINE_FAULT: e.sql,
+      };
+    }
+    return { error: true, code: 800, message: error.message };
   }
-  if (dbUser?.password !== password) {
-    result = {
-      code: 401,
-      message: "Incorrect Password",
-    };
-    return result;
-  }
-  if (dbUser?.ip_address !== ipAddress) {
-    result = {
-      code: 401,
-      message: "Cannot access the page from where you are",
-    };
-    return result;
-  }
-  const chats = await getChats(dbUser.user_id);
-  chats.forEach((chat) => chatArray.push(chat.chat_name));
-  result = {
-    name: dbUser.u_name,
-    email: dbUser.email,
-    id: dbUser.user_id,
-    chats: chatArray,
-    userName: dbUser.user_name,
-    ipAddress: dbUser.ip_address,
-    isAdmin: dbUser.is_admin,
-    message: "Access granted",
-    code: 200,
-  };
-  return result;
 };
 
-const signup = async (userData) => {
-  const data = {
-    u_name: userData.name,
-    user_name: userData.userName,
-    email: userData.email,
-    password: userData.password,
-    ip_address: userData.ipAddress,
-  };
-  const insertedUser = await insertUser(data);
-  return {
-    name: userData.name,
-    email: userData.email,
-    id: insertedUser.insertId,
-    chats: [],
-    userName: userData.userName,
-    ipAddress: userData.ipAddress,
-    isAdmin: 0,
-  };
+const signInUser = async (user) => {
+  try {
+    const [userData] = await connection
+      .promise()
+      .execute(`SELECT * FROM users WHERE email="${user.email}";`);
+    if (userData.length === 0) {
+      return {
+        error: true,
+        code: 406,
+        message: "user does not exists",
+      };
+    }
+    if (userData[0].password != user.password) {
+      return {
+        error: true,
+        code: 406,
+        message: "wrong email & password combination",
+      };
+    }
+    return {
+      error: false,
+      code: 200,
+      message: `success!`,
+      data: userData[0],
+    };
+  } catch (e) {
+    let error = e;
+    if (e.sql !== undefined) {
+      error = {
+        ERROR_SQL_CODE: e.code,
+        ERROR_SQL_N: e.errno,
+        SQL_ERROR_MESSAGE: e.sqlMessage,
+        MESSAGE: "AN ERROR HAS OCCURRED",
+        SQL_LINE_FAULT: e.sql,
+      };
+    }
+    return { error: true, code: 800, message: error.message };
+  }
 };
 
-module.exports = { signin, signup };
+module.exports = { signInUser, signUpUser };
+/*
+ex usage:
+app.post("/signin", async (req, res) => {
+  const values = req.body;
+  const data = await signInUser(values);
+  res.send(data);
+});
+body:
+{
+	"email":"ricardovera71@gmail.com",
+	"password": "123456789"
+}
+
+app.post("/signup", async (req, res) => {
+  const values = req.body;
+  const data = await signUpUser(values);
+  res.send(data);
+});
+body:
+{
+	"alias": "RICK",
+	"userName": "REXXAR",
+	"email": "ricardovera71@gmail.com",
+	"password": "123456789",
+	"ipAddress": "181.232.180.1"
+}
+
+*/

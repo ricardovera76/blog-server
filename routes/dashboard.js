@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { getPosts } = require("../controllers/postController");
+const {
+  getFilteredPosts,
+  getRecentPosts,
+} = require("../controllers/postController");
 
-router.get("/", async (req, res) => {
-  try {
-    const data = await getPosts(true);
-    res.send(data);
-  } catch (error) {
-    console.log(error);
-    res.send(`${error}`);
-  }
+router.get("/recent", async (req, res) => {
+  const result = await getRecentPosts();
+  res.send(result);
 });
-
+router.get("/:filter", async (req, res) => {
+  const filter = req.params.filter;
+  const result = await getFilteredPosts(filter);
+  res.send(result);
+});
 module.exports = router;

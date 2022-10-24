@@ -1,18 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const {
-  chatInfo,
-  sendMsg,
-  chatHistory,
+  getChatHistory,
+  sendMessage,
 } = require("../controllers/chatController");
 
 router.get("/:id", async (req, res) => {
-  const chatData = await chatHistory(req.params.id);
+  const chatData = await getChatHistory(req.params.id);
   res.send(chatData);
 });
 
 const socketServer = (io) => {
-  let chatId;
   try {
     io.on("connection", (socket) => {
       socket.on("join", async (room) => {
@@ -25,7 +23,11 @@ const socketServer = (io) => {
         console.log(data);
         try {
           socket.to(data.chat_name).emit("received", data);
-          await sendMsg(chatId, data.user_id, data.message);
+          await sendMessage({
+            chatName: data.chat_name,
+            userName: data.user_name,
+            message: data.message,
+          });
         } catch (err) {
           console.log(err);
         }

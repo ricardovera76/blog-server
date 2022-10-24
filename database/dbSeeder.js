@@ -1,41 +1,44 @@
-const connection = require("./database");
+const connection = require("./db");
 
-console.log("creating db tables...");
+const createUsersTable = () => {
+  connection.query(
+    'CREATE TABLE users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, user_alias VARCHAR(255) NOT NULL, user_name VARCHAR(255) NOT NULL UNIQUE, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, user_type VARCHAR(1) NOT NULL DEFAULT "s", ip_address VARCHAR(255) NOT NULL, user_subjects JSON DEFAULT (JSON_ARRAY()));'
+  );
+  connection.query(
+    `INSERT INTO users (user_id,user_alias,user_name,email,password,ip_address) VALUES (1,"test", "testing1","test@test.com","123456789","192.168.2.2");`
+  );
+};
 
-console.log("creating Users table...");
-connection.query(
-  "CREATE TABLE Users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, u_name VARCHAR(255) NOT NULL, user_name VARCHAR(255) NOT NULL UNIQUE, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, is_admin TINYINT(1) NOT NULL DEFAULT 0, ip_address VARCHAR(255) NOT NULL);"
-);
-console.log("Users table created...");
+const createSubjectsTable = () => {
+  connection.query(
+    "CREATE TABLE subjects (subject_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, subject_name VARCHAR(255) NOT NULL, subj_users_signed JSON NOT NULL DEFAULT (JSON_ARRAY()));"
+  );
+};
 
-console.log("seeding User table...");
-connection.query(
-  `INSERT INTO Users (user_id,u_name,user_name,email,password,is_admin,ip_address) VALUES (1,"test", "testing1","test@test.com","123456789",1,"192.168.2.2");`
-);
-console.log("User table Seeded!...");
+const createChatsTable = () => {
+  connection.query(
+    "CREATE TABLE chats (chat_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, chat_name VARCHAR(255) NOT NULL UNIQUE, chat_users_signed JSON NOT NULL DEFAULT (JSON_ARRAY()), chat_messages JSON NOT NULL DEFAULT (JSON_ARRAY()), chat_subj_id INT NOT NULL, FOREIGN KEY (chat_subj_id) REFERENCES subjects(subject_id));"
+  );
+};
 
-console.log("creating Chats table...");
-connection.query(
-  "CREATE TABLE Chats (chat_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, chat_name VARCHAR(255) NOT NULL);"
-);
-console.log("Chats table created...");
+const createPostsTable = () => {
+  connection.query(
+    "CREATE TABLE posts (post_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, post_title VARCHAR(255) NOT NULL, post_body TEXT NOT NULL, post_cover TEXT, post_vid TEXT, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, post_user_id INT NOT NULL, post_subject_id INT NOT NULL, post_replies JSON NOT NULL DEFAULT (JSON_ARRAY()), FOREIGN KEY (post_user_id) REFERENCES users(user_id),FOREIGN KEY (post_subject_id) REFERENCES subjects(subject_id));"
+  );
+};
 
-console.log("creating Posts table...");
-connection.query(
-  "CREATE TABLE Posts (posts_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, post_title VARCHAR(255) NOT NULL, post_body TEXT, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, post_user_id INT NOT NULL, FOREIGN KEY (post_user_id) REFERENCES Users(user_id));"
-);
-console.log("Posts table created...");
+const createTables = () => {
+  console.log("creating db tables...");
+  console.log("creating users table...");
+  createUsersTable();
+  console.log("creating Subjects table...");
+  createSubjectsTable();
+  console.log("creating chats table...");
+  createChatsTable();
+  console.log("creating Posts table...");
+  createPostsTable();
+};
 
-console.log("creating Messages table...");
-connection.query(
-  "CREATE TABLE Messages (message_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, message_text TEXT NOT NULL, message_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, message_user_id INT NOT NULL, message_chat_id INT NOT NULL, FOREIGN KEY (message_user_id) REFERENCES Users(user_id), FOREIGN KEY (message_chat_id) REFERENCES Chats(chat_id));"
-);
-console.log("Messages table created...");
+createTables();
 
-console.log("creating UserChats table...");
-connection.query(
-  "CREATE TABLE UserChats (userchat_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE, userchat_user_id INT NOT NULL, userchat_chat_id INT NOT NULL, FOREIGN KEY (userchat_user_id) REFERENCES Users(user_id), FOREIGN KEY (userchat_chat_id) REFERENCES Chats(chat_id));"
-);
-console.log("UserChats table created...");
-
-process.exit(0);
+// process.exit(0);

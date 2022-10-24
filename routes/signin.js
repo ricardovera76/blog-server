@@ -1,14 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { signin } = require("../controllers/authController");
+const { signInUser } = require("../controllers/authController");
 
 router.post("/", async (req, res) => {
-  const signedUser = await signin(
-    req.body.email,
-    req.body.password,
-    req.body.ipAddress
-  );
-  res.send(signedUser);
+  const values = req.body;
+  const data = await signInUser(values);
+  res.send(data);
 });
 
 module.exports = router;
