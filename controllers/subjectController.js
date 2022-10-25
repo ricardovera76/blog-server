@@ -15,13 +15,13 @@ const createSubject = async (data) => {
     await connection
       .promise()
       .execute(
-        `INSERT INTO chats (chat_name, chat_subj_id) VALUES ("${data.chatName}", ${sub.subject_id});`
+        `INSERT INTO chats (chat_name, chat_subj_id) VALUES ("${data.subjectName}", ${sub.subject_id});`
       );
 
     return {
       error: false,
       code: 200,
-      message: `subject ${data.subjectName} and chat ${data.chatName} created!`,
+      message: `subject ${data.subjectName} and chat ${data.subjectName} created!`,
     };
   } catch (e) {
     let err = e;
@@ -118,12 +118,21 @@ const addParticipants = async (data) => {
       user_name: user[0].user_name,
       user_alias: user[0].user_alias,
     });
-    await connection.promise().execute(
-      `UPDATE users SET user_subjects = JSON_SET(user_subjects,'$[${userSubLen}]', '${subject}') WHERE user_id=${user[0].user_id};
-       UPDATE subjects SET subj_users_signed = JSON_SET(subj_users_signed,'$[${subjLen}]', '${newUser}') WHERE subject_id=${sub[0].subject_id};
-       UPDATE chats SET chat_users_signed = JSON_SET(chat_users_signed,'$[${chatUserLen}]', '${newUser}') WHERE chat_id=${chat[0].chat_id};
-      `
-    );
+    await connection
+      .promise()
+      .execute(
+        `UPDATE users SET user_subjects = JSON_SET(user_subjects,'$[${userSubLen}]', '${subject}') WHERE user_id=${user[0].user_id};`
+      );
+    await connection
+      .promise()
+      .execute(
+        `UPDATE subjects SET subj_users_signed = JSON_SET(subj_users_signed,'$[${subjLen}]', '${newUser}') WHERE subject_id=${sub[0].subject_id};`
+      );
+    await connection
+      .promise()
+      .execute(
+        `UPDATE chats SET chat_users_signed = JSON_SET(chat_users_signed,'$[${chatUserLen}]', '${newUser}') WHERE chat_id=${chat[0].chat_id};`
+      );
     return {
       error: false,
       code: 200,
