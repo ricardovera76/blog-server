@@ -15,7 +15,11 @@ router.post("/", async (req, res) => {
 router.post("/chats", async (req, res) => {
   const data = req.body;
   const result = await getUserInfo(data);
-  res.send(result.data.user_subjects);
+  if (!result.error) {
+    res.send(result);
+    return;
+  }
+  res.send(result);
 });
 
 router.post("/ip", async (req, res) => {

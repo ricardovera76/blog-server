@@ -16,7 +16,7 @@ const getChatHistory = async (chatName) => {
       error: false,
       code: 200,
       message: `retrieved ${chatName} data!`,
-      data: chats,
+      data: chats[0],
     };
   } catch (e) {
     let err = e;
@@ -61,6 +61,7 @@ const sendMessage = async (data) => {
       chat_name: data.chatName,
       chat_id: chats[0].chat_id,
       message: data.message,
+      time: data.time,
     });
     await connection
       .promise()

@@ -35,6 +35,7 @@ const socketServer = (io) => {
             chatName: data.chat_name,
             userName: data.user_name,
             message: data.message,
+            time: data.time,
           });
         } catch (err) {
           console.log(err);
